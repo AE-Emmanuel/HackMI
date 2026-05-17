@@ -1,0 +1,61 @@
+.dna-map-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+  padding: 16px 0 24px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.dna-map-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.dna-map-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dna-map-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* Animated strand flow */
+@keyframes strand-flow {
+  to { stroke-dashoffset: -64; }
+}
+
+.dna-strand {
+  animation: strand-flow 5s linear infinite;
+}
+
+.strand-b {
+  animation-duration: 6.5s;
+  animation-direction: reverse;
+}
+
+/* Skill node hover */
+.skill-node {
+  cursor: pointer;
+}
+
+.skill-node .node-main {
+  transition: transform 0.18s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.skill-node .node-glow {
+  transition: opacity 0.18s ease;
+}
+
+.skill-node:hover .node-main {
+  transform: scale(1.28);
+}
+
+.skill-node:hover .node-glow {
+  opacity: 0.28 !important;
+}
+
+.skill-node:hover {
+  filter: drop-shadow(0 0 7px rgba(26, 107, 255, 0.45));
+}

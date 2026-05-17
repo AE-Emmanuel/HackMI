@@ -1,0 +1,291 @@
+.resume-root {
+  min-height: 100vh;
+  background: var(--bg-alt);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+
+/* ---- Background DNA watermark (horizontal + vertical cross) ---- */
+.resume-bg-dna {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.resume-bg-dna-h {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  opacity: 0.07;
+  filter: blur(2px);
+}
+
+.resume-bg-dna-v {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* rotate the horizontal canvas 90° to make it run vertically */
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center center;
+  opacity: 0.07;
+  filter: blur(2px);
+}
+
+/* ---- Top bar ---- */
+.resume-topbar {
+  width: 100%;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Center area ---- */
+.resume-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Upload zone ---- */
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  padding: 52px 48px;
+  border-radius: 24px;
+  border: 2px dashed var(--border);
+  background: var(--surface);
+  transition: border-color 0.2s ease, background 0.2s ease;
+  min-width: 320px;
+}
+
+.upload-zone:hover,
+.upload-zone.dragging {
+  border-color: var(--blue-primary);
+  background: var(--blue-pale);
+}
+
+.upload-plus-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--blue-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 24px var(--blue-glow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-zone:hover .upload-plus-btn {
+  transform: scale(1.08);
+  box-shadow: 0 10px 32px var(--blue-glow);
+}
+
+.upload-plus-icon {
+  font-size: 2.4rem;
+  color: white;
+  line-height: 1;
+  font-weight: 300;
+  margin-top: -2px;
+}
+
+.upload-hint {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color 0.25s;
+}
+
+.upload-hint-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  transition: color 0.25s;
+}
+
+.upload-error {
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: #d9534f;
+  background: rgba(217, 83, 79, 0.08);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 83, 79, 0.25);
+}
+
+.send-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- Resume card ---- */
+.resume-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.resume-card {
+  position: relative;
+  width: 340px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  box-shadow: 0 8px 40px rgba(26, 107, 255, 0.08);
+  overflow: hidden;
+  transition: height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s, border-color 0.25s;
+  padding: 20px 20px 16px;
+}
+
+.resume-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+  transition: border-color 0.25s;
+}
+
+.resume-card-info { flex: 1; min-width: 0; }
+
+.resume-card-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.25s;
+}
+
+.resume-card-size {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  transition: color 0.25s;
+}
+
+.resume-card-badge {
+  display: inline-block;
+  background: #e6f4ea;
+  color: #1e7e34;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.resume-card-lines {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resume-card-line {
+  height: 8px;
+  background: var(--blue-primary);
+  border-radius: 4px;
+  transition: background 0.25s;
+}
+
+.resume-card-remove {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+  z-index: 2;
+}
+
+.resume-card-remove:hover {
+  color: #e53935;
+  background: rgba(229, 57, 53, 0.08);
+}
+
+/* ---- Send button ---- */
+.send-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--blue-primary);
+  color: #fff;
+  font-size: 0.97rem;
+  font-weight: 600;
+  padding: 13px 32px;
+  border-radius: 100px;
+  box-shadow: 0 4px 20px var(--blue-glow);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.send-btn:hover {
+  background: var(--blue-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px var(--blue-glow);
+}
+
+.send-btn:active {
+  transform: translateY(0);
+}
+
+/* ---- Send loading overlay ---- */
+.send-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s;
+}
+
+.send-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.send-loading-label {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: color 0.25s;
+}
+
+.send-loading-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 360px;
+  transition: color 0.25s;
+}

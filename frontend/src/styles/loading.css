@@ -1,0 +1,99 @@
+.loading-root {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: background 0.25s ease;
+  padding: 32px;
+}
+
+.loading-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  max-width: 720px;
+  width: 100%;
+  text-align: center;
+}
+
+.loading-headline {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--fg, #0f172a);
+  letter-spacing: 0.01em;
+  margin-top: 8px;
+}
+
+.loading-rotating-line {
+  min-height: 28px;
+  font-size: 0.98rem;
+  color: var(--fg-soft, #64748b);
+  background: rgba(26, 107, 255, 0.06);
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(26, 107, 255, 0.18);
+  animation: rotate-fade 0.35s ease both;
+  max-width: 620px;
+}
+@keyframes rotate-fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.loading-progress-track {
+  width: min(540px, 80%);
+  height: 6px;
+  background: rgba(26, 107, 255, 0.10);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.loading-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1a6bff, #4d8fff);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 14px rgba(26, 107, 255, 0.4);
+}
+
+.loading-meta {
+  display: flex;
+  justify-content: space-between;
+  width: min(540px, 80%);
+  font-size: 0.78rem;
+  color: var(--fg-soft, #64748b);
+  font-variant-numeric: tabular-nums;
+}
+.loading-elapsed {
+  font-weight: 600;
+  color: var(--blue-primary, #1a6bff);
+}
+
+.loading-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #d9534f;
+  background: rgba(217, 83, 79, 0.08);
+  padding: 16px 22px;
+  border-radius: 12px;
+  border: 1px solid rgba(217, 83, 79, 0.25);
+  max-width: 560px;
+}
+.loading-retry {
+  background: var(--blue-primary, #1a6bff);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.loading-retry:hover {
+  filter: brightness(1.05);
+}
