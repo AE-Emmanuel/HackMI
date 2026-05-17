@@ -86,9 +86,9 @@ export default function LandingPage() {
         </button>
       </main>
 
-      {/* Bottom DNA strip */}
+      {/* Bottom DNA strip — larger */}
       <div className="landing-dna-strip">
-        <DnaHelix width={1800} height={72} color={dnaColor} speed={1} />
+        <DnaHelix width={2200} height={115} color={dnaColor} speed={1} />
       </div>
     </div>
   )
