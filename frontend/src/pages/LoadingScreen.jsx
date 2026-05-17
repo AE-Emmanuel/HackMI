@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import DnaSpinner from '../components/DnaSpinner'
 import { subscribeToEvents, fetchPayload } from '../api/client'
+import { useTheme } from '../context/ThemeContext'
 import '../styles/loading.css'
 
 // Human-friendly labels for the tracker's NODE_LABELS keys (kept in sync
@@ -33,6 +34,9 @@ export default function LoadingScreen() {
   const location = useLocation()
   const sessionId  = location.state?.sessionId
   const startedAt  = location.state?.startedAt || Date.now()
+
+  const { theme } = useTheme()
+  const spinnerColor = theme === 'dark' ? '#4d8fff' : '#1a6bff'
 
   const [events, setEvents] = useState([])
   const [currentIdx, setCurrentIdx] = useState(0)
@@ -143,7 +147,7 @@ export default function LoadingScreen() {
   return (
     <div className="loading-root">
       <div className="loading-stack">
-        <DnaSpinner width={260} height={62} color="#1a6bff" speed={1} />
+        <DnaSpinner width={260} height={62} color={spinnerColor} speed={1} />
 
         <div className="loading-headline">
           {errorMsg ? 'Something went wrong' : 'Analyzing your career DNA…'}
@@ -192,14 +196,18 @@ function renderEventLine(event) {
   switch (event.kind) {
     case 'node_start':
       return `${label}: starting…`
-    case 'node_end':
-      return `${label}: ${event.summary}`
+    case 'node_end': {
+      const clean = (event.summary || '').split(' | ')[0]
+      return `${label}: ${clean}`
+    }
     case 'llm_start':
       return `${label || 'Pipeline'}: calling watsonx Granite…`
-    case 'llm_end':
-      return `${label || 'Pipeline'}: ${event.summary}`
+    case 'llm_end': {
+      const clean = (event.summary || '').split(' | usage=')[0]
+      return `${label || 'Pipeline'}: ${clean}`
+    }
     case 'pipeline_summary':
-      return event.summary
+      return 'All agents complete — building your pathway…'
     default:
       return event.summary || event.kind
   }

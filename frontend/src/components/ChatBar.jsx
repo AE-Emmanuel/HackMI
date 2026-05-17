@@ -1,8 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { sendChat } from '../api/client'
 import './ChatBar.css'
 
 const MAX_EXCHANGES = 8
+
+const STARTER_CHIPS = [
+  'Why is role #1 best for me?',
+  'What skill should I learn first?',
+  'Where can I find IBM SkillsBuild courses?',
+]
 
 export default function ChatBar({ sessionId }) {
   const [messages,     setMessages]     = useState([])
@@ -10,13 +17,51 @@ export default function ChatBar({ sessionId }) {
   const [focused,      setFocused]      = useState(false)
   const [isThinking,   setIsThinking]   = useState(false)
   const [limitReached, setLimitReached] = useState(false)
-  const textareaRef  = useRef(null)
-  const bottomRef    = useRef(null)
+  const [revealedTexts, setRevealedTexts] = useState({})
+
+  const textareaRef        = useRef(null)
+  const historyRef         = useRef(null)
+  const nextIdRef          = useRef(0)
+  const revealIntervalsRef = useRef({})
+
   const exchangeCount = messages.filter(m => m.role === 'user').length
 
+  // Scroll to bottom whenever messages change or thinking state changes
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (historyRef.current) {
+      historyRef.current.scrollTo({
+        top: historyRef.current.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
   }, [messages, isThinking])
+
+  // Typewriter effect for new AI messages
+  useEffect(() => {
+    const lastMsg = messages[messages.length - 1]
+    if (!lastMsg || lastMsg.role !== 'ai') return
+    const { id, text } = lastMsg
+    if (revealedTexts[id] !== undefined) return
+
+    setRevealedTexts(prev => ({ ...prev, [id]: '' }))
+    let pos = 0
+    const CHUNK = 12
+    const TICK_MS = 18
+    const iv = setInterval(() => {
+      pos = Math.min(pos + CHUNK, text.length)
+      setRevealedTexts(prev => ({ ...prev, [id]: text.slice(0, pos) }))
+      if (pos >= text.length) {
+        clearInterval(iv)
+        delete revealIntervalsRef.current[id]
+      }
+    }, TICK_MS)
+    revealIntervalsRef.current[id] = iv
+
+    return () => {
+      clearInterval(iv)
+      delete revealIntervalsRef.current[id]
+    }
+  }, [messages])
 
   const handleChange = (e) => {
     setInput(e.target.value)
@@ -25,14 +70,17 @@ export default function ChatBar({ sessionId }) {
     ta.style.height = Math.min(ta.scrollHeight, 160) + 'px'
   }
 
-  const handleSend = async () => {
-    if (!input.trim() || isThinking || limitReached) return
+  const handleSend = async (overrideText) => {
+    const text = (overrideText !== undefined ? overrideText : input).trim()
+    if (!text || isThinking || limitReached) return
 
-    const text = input.trim()
-    setInput('')
-    if (textareaRef.current) textareaRef.current.style.height = 'auto'
+    if (overrideText === undefined) {
+      setInput('')
+      if (textareaRef.current) textareaRef.current.style.height = 'auto'
+    }
 
-    setMessages(prev => [...prev, { role: 'user', text }])
+    const userMsgId = nextIdRef.current++
+    setMessages(prev => [...prev, { role: 'user', text, id: userMsgId }])
     setIsThinking(true)
 
     let answer
@@ -48,12 +96,11 @@ export default function ChatBar({ sessionId }) {
       answer = `Sorry, something went wrong: ${err?.message || String(err)}`
     }
 
-    setMessages(prev => [...prev, { role: 'ai', text: answer }])
+    const aiMsgId = nextIdRef.current++
+    setMessages(prev => [...prev, { role: 'ai', text: answer, id: aiMsgId }])
     setIsThinking(false)
 
-    if (exchangeCount + 1 >= MAX_EXCHANGES) {
-      setLimitReached(true)
-    }
+    if (exchangeCount + 1 >= MAX_EXCHANGES) setLimitReached(true)
   }
 
   const handleKeyDown = (e) => {
@@ -70,11 +117,17 @@ export default function ChatBar({ sessionId }) {
 
       {/* ── Conversation history ── */}
       {hasMessages && (
-        <div className="chatbar-history">
-          {messages.map((m, i) => (
-            <div key={i} className={`chat-msg chat-msg-${m.role}`}>
+        <div className="chatbar-history" ref={historyRef}>
+          {messages.map((m) => (
+            <div key={m.id} className={`chat-msg chat-msg-${m.role}`}>
               <span className="chat-msg-label">{m.role === 'user' ? 'You' : 'SkillDNA'}</span>
-              <p className="chat-msg-text">{m.text}</p>
+              {m.role === 'user' ? (
+                <p className="chat-msg-text">{m.text}</p>
+              ) : (
+                <div className="chat-msg-text chat-msg-markdown">
+                  <ReactMarkdown>{revealedTexts[m.id] ?? m.text}</ReactMarkdown>
+                </div>
+              )}
             </div>
           ))}
 
@@ -86,7 +139,6 @@ export default function ChatBar({ sessionId }) {
               </div>
             </div>
           )}
-          <div ref={bottomRef} />
         </div>
       )}
 
@@ -116,7 +168,7 @@ export default function ChatBar({ sessionId }) {
             onBlur={() => setFocused(false)}
             disabled={isThinking || !sessionId}
           />
-          <button className="chatbar-send" onClick={handleSend}
+          <button className="chatbar-send" onClick={() => handleSend()}
             disabled={!input.trim() || isThinking || !sessionId} aria-label="Send">
             {isThinking ? (
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -135,11 +187,27 @@ export default function ChatBar({ sessionId }) {
         </div>
       )}
 
+      {/* ── Starter chips (shown only before first message) ── */}
+      {!hasMessages && !limitReached && (
+        <div className="chatbar-chips">
+          {STARTER_CHIPS.map((q) => (
+            <button
+              key={q}
+              className="chatbar-chip"
+              disabled={isThinking || !sessionId}
+              onClick={() => handleSend(q)}
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
       {!limitReached && (
         <p className="chatbar-hint">
           {exchangeCount > 0
             ? `${MAX_EXCHANGES - exchangeCount} message${MAX_EXCHANGES - exchangeCount !== 1 ? 's' : ''} remaining · Shift+Enter for new line`
-            : 'Press Enter to send · Shift+Enter for new line · Try: "Why is role #1 best for me?"'}
+            : 'Press Enter to send · Shift+Enter for new line'}
         </p>
       )}
     </div>

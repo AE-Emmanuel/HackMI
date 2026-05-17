@@ -176,29 +176,50 @@ export default function CareerPathwayMap({
     const mapEl    = mapRef.current
     if (!scrollEl || !mapEl) return
     if (selectedRole) return  // only auto-center on initial mount
-    // Center horizontally on the AI-match hub.
     const hubEl = hubRef.current
     if (!hubEl) return
+
+    // Reset any padding from a prior render.
+    mapEl.style.paddingLeft = ''
+
     const hubRect = hubEl.getBoundingClientRect()
     const mapRect = mapEl.getBoundingClientRect()
-    const hubMidX = hubRect.left + hubRect.width / 2 - mapRect.left
-    const targetScroll = hubMidX - scrollEl.clientWidth / 2
-    scrollEl.scrollTo({ left: Math.max(0, targetScroll), behavior: 'auto' })
+    const hubFromContentLeft = hubRect.left + hubRect.width / 2 - mapRect.left
+    const halfVP = scrollEl.clientWidth / 2
+
+    // If the hub is too close to the left edge, add padding so scrollTo can reach it.
+    if (hubFromContentLeft < halfVP) {
+      mapEl.style.paddingLeft = `${halfVP - hubFromContentLeft + 36}px`
+    }
+
+    // Re-measure after padding change (layout needs a rAF beat).
+    requestAnimationFrame(() => {
+      const h2 = hubEl.getBoundingClientRect()
+      const m2 = mapEl.getBoundingClientRect()
+      const hubMidX2 = h2.left + h2.width / 2 - m2.left
+      scrollEl.scrollTo({ left: Math.max(0, hubMidX2 - halfVP), behavior: 'auto' })
+    })
   }, [roles])
 
   useEffect(() => {
     if (!selectedRole) return
     const t = setTimeout(() => {
       const scrollEl = scrollRef.current
-      const colEl    = indColRef.current
-      if (!scrollEl || !colEl) return
-      // Animate so the role column sits at ~28% from the left edge, putting
-      // the industries column in the visual sweet spot.
-      const roleEl = roleRefs.current[selectedRole]
-      if (!roleEl) return
-      const roleLeft = roleEl.offsetLeft
-      const targetLeft = roleLeft - scrollEl.clientWidth * 0.28
-      scrollEl.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' })
+      const roleEl   = roleRefs.current[selectedRole]
+      if (!scrollEl || !roleEl) return
+
+      // Use getBoundingClientRect so dynamic paddingLeft doesn't skew offsetLeft.
+      const containerRect = scrollEl.getBoundingClientRect()
+      const nodeRect      = roleEl.getBoundingClientRect()
+      const nodeScrollLeft = scrollEl.scrollLeft + nodeRect.left - containerRect.left
+      const targetTop     = scrollEl.scrollTop + nodeRect.top - containerRect.top
+                            - containerRect.height / 2 + nodeRect.height / 2
+
+      scrollEl.scrollTo({
+        left: Math.max(0, nodeScrollLeft - scrollEl.clientWidth * 0.28),
+        top:  Math.max(0, targetTop),
+        behavior: 'smooth',
+      })
     }, 80)
     return () => clearTimeout(t)
   }, [selectedRole])
@@ -207,16 +228,40 @@ export default function CareerPathwayMap({
     if (!selectedInd) return
     const t = setTimeout(() => {
       const scrollEl = scrollRef.current
-      const colEl    = skillColRef.current
-      if (!scrollEl || !colEl) return
-      const indEl = indRefs.current[selectedInd]
-      if (!indEl) return
-      const indLeft = indEl.offsetLeft
-      const targetLeft = indLeft - scrollEl.clientWidth * 0.28
-      scrollEl.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' })
+      const indEl    = indRefs.current[selectedInd]
+      if (!scrollEl || !indEl) return
+
+      const containerRect = scrollEl.getBoundingClientRect()
+      const nodeRect      = indEl.getBoundingClientRect()
+      const nodeScrollLeft = scrollEl.scrollLeft + nodeRect.left - containerRect.left
+      const targetTop     = scrollEl.scrollTop + nodeRect.top - containerRect.top
+                            - containerRect.height / 2 + nodeRect.height / 2
+
+      scrollEl.scrollTo({
+        left: Math.max(0, nodeScrollLeft - scrollEl.clientWidth * 0.28),
+        top:  Math.max(0, targetTop),
+        behavior: 'smooth',
+      })
     }, 80)
     return () => clearTimeout(t)
   }, [selectedInd])
+
+  useEffect(() => {
+    if (!expandedSkill) return
+    const t = setTimeout(() => {
+      const scrollEl = scrollRef.current
+      const skillEl  = skillRefs.current[expandedSkill]
+      if (!scrollEl || !skillEl) return
+
+      const containerRect = scrollEl.getBoundingClientRect()
+      const nodeRect      = skillEl.getBoundingClientRect()
+      const targetTop     = scrollEl.scrollTop + nodeRect.top - containerRect.top
+                            - containerRect.height / 2 + nodeRect.height / 2
+
+      scrollEl.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' })
+    }, 120)
+    return () => clearTimeout(t)
+  }, [expandedSkill])
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const onRoleClick = (role) => {
