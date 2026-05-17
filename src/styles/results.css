@@ -1,0 +1,107 @@
+.results-root {
+  min-height: 100vh;
+  background: var(--bg-alt);
+  display: flex;
+  flex-direction: column;
+  transition: background 0.25s;
+}
+
+/* ── Top bar ── */
+.results-topbar {
+  width: 100%;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.topbar-logo-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: opacity 0.15s;
+}
+.topbar-logo-btn:hover { opacity: 0.72; }
+
+.results-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.back-btn:hover {
+  background: var(--blue-pale);
+  color: var(--blue-primary);
+  border-color: var(--blue-light);
+}
+
+/* ── Heading ── */
+.results-heading {
+  padding: 4px 32px 0;
+  flex-shrink: 0;
+}
+
+.results-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+  transition: color 0.25s;
+}
+
+.results-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  transition: color 0.25s;
+}
+
+.results-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.legend-dot-user { background: var(--blue-primary); }
+.legend-dot-suggested { background: var(--blue-primary); opacity: 0.5; }
+
+/* ── Map section ── */
+.results-map-section {
+  flex: 1;
+  padding: 8px 20px 0;
+  min-height: 0;
+}

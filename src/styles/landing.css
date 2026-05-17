@@ -1,0 +1,189 @@
+.landing-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+
+.landing-root::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, var(--blue-glow) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Top bar ---- */
+.landing-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 18px 28px;
+  position: relative;
+  z-index: 2;
+}
+
+.landing-topbar-spacer {
+  flex: 1;
+}
+
+/* ---- Main ---- */
+.landing-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Title ---- */
+.landing-title-wrap {
+  margin-bottom: 28px;
+}
+
+.landing-title {
+  display: flex;
+  align-items: center;
+  font-size: 5.2rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text-primary);
+  user-select: none;
+  transition: color 0.25s ease;
+}
+
+.title-letters {
+  display: inline-block;
+}
+
+.title-i-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 2px;
+  position: relative;
+  top: 1px;
+}
+
+/* ---- Tagline ---- */
+.landing-tagline-wrap {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.landing-tagline {
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  transition: color 0.25s ease;
+}
+
+.landing-sub {
+  font-size: 0.97rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  transition: color 0.25s ease;
+}
+
+/* ---- Skill cycler ---- */
+.skill-cycler-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 52px;
+  text-align: center;
+}
+
+.skill-cycler-label {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  transition: color 0.25s ease;
+}
+
+.skill-cycler-badge {
+  background: var(--blue-pale);
+  border: 1.5px solid var(--blue-light);
+  border-radius: 100px;
+  padding: 10px 28px;
+  min-width: 280px;
+  text-align: center;
+  overflow: hidden;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.skill-cycler-text {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--blue-primary);
+  letter-spacing: 0.01em;
+  transition: opacity 0.3s ease, transform 0.3s ease, color 0.25s ease;
+}
+
+.skill-cycler-text.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.skill-cycler-text.fade-out {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* ---- Try Me button ---- */
+.try-me-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue-primary);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 15px 40px;
+  border-radius: 100px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 24px var(--blue-glow);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.try-me-btn:hover {
+  background: var(--blue-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--blue-glow);
+}
+
+.try-me-btn:active {
+  transform: translateY(0);
+}
+
+.try-me-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.try-me-btn:hover .try-me-arrow {
+  transform: translateX(4px);
+}
+
+/* ---- Bottom DNA strip ---- */
+.landing-dna-strip {
+  width: 100%;
+  overflow: hidden;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
