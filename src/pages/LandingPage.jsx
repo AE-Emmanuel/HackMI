@@ -1,8 +1,10 @@
+// src/pages/LandingPage.jsx
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DnaLetterI from '../components/DnaLetterI'
 import DnaHelix from '../components/DnaHelix'
 import ThemeToggle from '../components/ThemeToggle'
+import MichiganMapAnimation from '../components/MichiganMapAnimation'
 import { useTheme } from '../context/ThemeContext'
 import '../styles/landing.css'
 
@@ -25,13 +27,13 @@ export default function LandingPage() {
   const [currentSkillIndex, setCurrentSkillIndex] = useState(0)
   const [fade, setFade] = useState(true)
 
-  const dnaColor = theme === 'dark' ? '#4d8fff' : '#1a6bff'
+  const dnaColor = theme === 'dark' ? '#4d8fff' : '#9fd6ff'
 
   useEffect(() => {
     const interval = setInterval(() => {
       setFade(false)
       setTimeout(() => {
-        setCurrentSkillIndex(i => (i + 1) % SKILLS.length)
+        setCurrentSkillIndex((i) => (i + 1) % SKILLS.length)
         setFade(true)
       }, 350)
     }, 2200)
@@ -40,14 +42,17 @@ export default function LandingPage() {
 
   return (
     <div className="landing-root">
-      {/* Top bar */}
+      {/* Map fills the full screen behind everything */}
+      <div className="map-layer">
+        <MichiganMapAnimation theme={theme} />
+      </div>
+
       <div className="landing-topbar">
         <div className="landing-topbar-spacer" />
         <ThemeToggle />
       </div>
 
       <main className="landing-main">
-        {/* Title */}
         <div className="landing-title-wrap">
           <h1 className="landing-title">
             <span className="title-letters">SK</span>
@@ -58,17 +63,15 @@ export default function LandingPage() {
           </h1>
         </div>
 
-        {/* Tagline */}
         <div className="landing-tagline-wrap">
           <p className="landing-tagline">
             Your skills already open more doors than you think.
           </p>
           <p className="landing-sub">
-            AI-powered workforce intelligence for Michigan's evolving economy.
+            AI-powered workforce intelligence for Michigan&apos;s evolving economy.
           </p>
         </div>
 
-        {/* Skill cycler */}
         <div className="skill-cycler-wrap">
           <span className="skill-cycler-label">Workers in Michigan already have skills like</span>
           <div className="skill-cycler-badge">
@@ -79,16 +82,26 @@ export default function LandingPage() {
           <span className="skill-cycler-label">that transfer directly into future industries.</span>
         </div>
 
-        {/* Try Me button */}
         <button className="try-me-btn" onClick={() => navigate('/loading')}>
           Try Me
           <span className="try-me-arrow">→</span>
         </button>
       </main>
 
-      {/* Bottom DNA strip — larger */}
-      <div className="landing-dna-strip">
-        <DnaHelix width={2200} height={115} color={dnaColor} speed={1} />
+      {/* DNA strip pinned to the very bottom of the viewport, sits below the map */}
+      <div
+        className="landing-dna-strip"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 2,
+          background: 'transparent',
+          pointerEvents: 'none',
+        }}
+      >
+        <DnaHelix width={1800} height={72} color={dnaColor} speed={0.22} />
       </div>
     </div>
   )
