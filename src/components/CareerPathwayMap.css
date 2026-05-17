@@ -1,0 +1,313 @@
+/* ── Scroll container ──────────────────────────────────────────────────── */
+.cpm-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 20px 36px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  scroll-behavior: smooth;
+}
+.cpm-scroll::-webkit-scrollbar { height: 5px; width: 5px; }
+.cpm-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Map canvas ────────────────────────────────────────────────────────── */
+.cpm-map {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 68px;
+  min-width: max-content;
+  min-height: 100%;
+  position: relative;
+  padding: 24px 0;
+}
+
+.cpm-svg {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+
+/* ── Columns ───────────────────────────────────────────────────────────── */
+.cpm-col {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+  align-self: center;   /* vertically center each column in the row */
+}
+
+.cpm-col-roles { align-self: flex-start; padding-top: 0; }
+
+/* Child columns (industries, skills) anchor to top so marginTop centers them on parent */
+.cpm-col-child { align-self: flex-start; transition: margin-top 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* ── Column level label ──────────────────────────────────────────────────── */
+.cpm-col-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  align-self: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 13px 5px 7px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  transition: background 0.25s, border-color 0.25s;
+}
+.cpm-col-header-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--blue-primary);
+  color: #fff;
+  font-size: 0.68rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cpm-col-header-text {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cpm-col-enter {
+  animation: col-appear 0.32s cubic-bezier(0.34, 1.44, 0.64, 1);
+}
+@keyframes col-appear {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Base node ─────────────────────────────────────────────────────────── */
+.cpm-node {
+  position: relative;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  min-width: 190px;
+  max-width: 240px;
+  user-select: none;
+  transition:
+    border-color 0.22s ease,
+    box-shadow   0.22s ease,
+    opacity      0.22s ease,
+    filter       0.22s ease,
+    transform    0.22s ease;
+}
+.cpm-node:hover:not(.cpm-blurred) {
+  border-color: var(--blue-primary);
+  box-shadow: 0 4px 20px var(--blue-glow);
+  transform: translateY(-2px);
+}
+
+/* Selected */
+.cpm-node.cpm-selected {
+  border-color: var(--blue-primary);
+  border-width: 2px;
+  box-shadow: 0 0 0 3px var(--blue-glow), 0 8px 28px rgba(26,107,255,0.16);
+}
+.cpm-node.cpm-selected .cpm-node-title { font-weight: 800; }
+
+/* Blurred */
+.cpm-node.cpm-blurred {
+  opacity: 0.2;
+  filter: blur(1.5px);
+  pointer-events: none;
+  transform: none;
+}
+
+/* × deselect button */
+.cpm-x {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.15s, color 0.15s;
+}
+.cpm-x:hover { background: rgba(229,57,53,0.12); color: #e53935; border-color: #e53935; }
+
+/* ── Smooth expand via CSS grid trick ──────────────────────────────────── */
+.cpm-expand-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.cpm-expand-wrap.cpm-open {
+  grid-template-rows: 1fr;
+}
+.cpm-expand-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Shared expand content */
+.cpm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+  transition: background 0.25s;
+}
+.cpm-expand-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.62;
+  margin-bottom: 8px;
+  transition: color 0.25s;
+}
+.cpm-expand-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--blue-primary);
+  margin-top: 4px;
+}
+
+/* ── My Skills node ────────────────────────────────────────────────────── */
+.cpm-node-skills {
+  background: linear-gradient(135deg, var(--blue-pale) 0%, var(--surface) 100%);
+  border-color: var(--blue-light);
+  text-align: center;
+  min-width: 200px;
+}
+.cpm-skills-icon {
+  display: flex; justify-content: center;
+  color: var(--blue-primary);
+  margin-bottom: 7px;
+}
+.cpm-node-count {
+  font-size: 0.7rem; color: var(--text-muted); margin-top: 3px;
+}
+
+.cpm-tag-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 2px; padding-bottom: 4px;
+  justify-content: center;
+}
+.cpm-tag {
+  background: var(--blue-pale);
+  border: 1px solid var(--blue-light);
+  color: var(--blue-primary);
+  font-size: 0.73rem; font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  transition: all 0.25s;
+}
+
+/* ── Hub node ───────────────────────────────────────────────────────────── */
+.cpm-node-hub {
+  background: var(--blue-primary);
+  border-color: var(--blue-primary);
+  text-align: center;
+  min-width: 155px;
+  max-width: 170px;
+  padding: 18px 18px;
+  overflow: visible;
+  cursor: default;
+  align-self: center;
+}
+.cpm-node-hub:hover { transform: none; box-shadow: 0 0 0 4px var(--blue-glow); }
+.cpm-node-hub .cpm-node-title { color: white; }
+.cpm-node-hub .cpm-node-sub   { color: rgba(255,255,255,0.7); }
+
+.cpm-hub-pulse {
+  position: absolute;
+  inset: -12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--blue-primary);
+  opacity: 0;
+  animation: hub-ring 2.5s ease-out infinite;
+  pointer-events: none;
+}
+.cpm-hub-pulse-2 { animation-delay: 1.25s; }
+@keyframes hub-ring {
+  0%   { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.38); }
+}
+
+/* ── Role nodes ─────────────────────────────────────────────────────────── */
+.cpm-node-role { min-width: 205px; max-width: 245px; }
+.cpm-match-pill {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--blue-primary);
+  background: var(--blue-pale);
+  border: 1px solid var(--blue-light);
+  border-radius: 100px;
+  padding: 2px 9px;
+  margin-bottom: 6px;
+}
+
+/* ── Industry nodes ─────────────────────────────────────────────────────── */
+.cpm-node-industry { min-width: 195px; max-width: 240px; }
+.cpm-acceptance-pill {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700;
+  color: #1e7e34; background: #e6f4ea;
+  border: 1px solid #a8d5b5;
+  border-radius: 100px;
+  padding: 2px 9px;
+  margin-bottom: 6px;
+}
+
+/* ── Skill nodes ─────────────────────────────────────────────────────────── */
+.cpm-node-skill {
+  min-width: 185px; max-width: 290px;
+  background: var(--blue-pale);
+  border-color: var(--blue-light);
+}
+.cpm-skill-label {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--blue-primary);
+  margin-bottom: 4px; opacity: 0.75;
+}
+.cpm-skill-cta {
+  font-size: 0.73rem; font-weight: 600;
+  color: var(--blue-primary);
+  margin-top: 5px;
+}
+
+.cpm-courses-label, .cpm-prep-label {
+  font-size: 0.67rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 8px 0 4px;
+}
+.cpm-courses {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 5px;
+  margin-bottom: 8px;
+}
+.cpm-courses li {
+  display: flex; align-items: flex-start; gap: 6px;
+  font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;
+}
+.cpm-courses li svg { flex-shrink: 0; margin-top: 2px; color: var(--blue-primary); }
+
+/* ── Shared text ─────────────────────────────────────────────────────────── */
+.cpm-node-title {
+  font-size: 0.9rem; font-weight: 700;
+  color: var(--text-primary); line-height: 1.3;
+  transition: color 0.25s;
+}
+.cpm-node-hub .cpm-node-title { font-size: 0.95rem; }
+.cpm-node-skill .cpm-node-title { color: var(--blue-primary); }
+.cpm-node-sub {
+  font-size: 0.75rem; color: var(--text-muted);
+  margin-top: 2px; transition: color 0.25s;
+}
