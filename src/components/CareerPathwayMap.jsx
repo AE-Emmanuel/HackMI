@@ -111,6 +111,16 @@ function makePath(ax, ay, bx, by, opacity, color) {
     fill="none" stroke-dasharray="6 4"/>`
 }
 
+// ── Column level label ─────────────────────────────────────────────────────
+function ColHeader({ step, label }) {
+  return (
+    <div className="cpm-col-header">
+      <span className="cpm-col-header-num">{step}</span>
+      <span className="cpm-col-header-text">{label}</span>
+    </div>
+  )
+}
+
 // ── Smooth expand wrapper ──────────────────────────────────────────────────
 function ExpandSection({ open, children }) {
   return (
@@ -228,17 +238,17 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
     return () => ro.disconnect()
   }, [drawLines])
 
-  // ── Smooth pan: slide map left to bring new column into view ─────────────
+  // ── Smooth pan: slide map so the newly-revealed column is visible ────────
   useEffect(() => {
     if (!selectedRole) return
     const t = setTimeout(() => {
       const scrollEl = scrollRef.current
-      const roleEl   = roleRefs.current[selectedRole]
-      if (!scrollEl || !roleEl) return
-      // Position selected role at ~35% from left so new industries column is visible
-      const targetLeft = roleEl.offsetLeft - scrollEl.clientWidth * 0.35
+      const colEl    = indColRef.current
+      if (!scrollEl || !colEl) return
+      // Place industries column so it starts at ~40% from left (role visible on left)
+      const targetLeft = colEl.offsetLeft - scrollEl.clientWidth * 0.4
       scrollEl.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' })
-    }, 60)
+    }, 80)
     return () => clearTimeout(t)
   }, [selectedRole])
 
@@ -248,10 +258,10 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
       const scrollEl = scrollRef.current
       const colEl    = skillColRef.current
       if (!scrollEl || !colEl) return
-      // Center skills column horizontally
-      const targetLeft = colEl.offsetLeft + colEl.offsetWidth / 2 - scrollEl.clientWidth * 0.5
+      // Place skills column so it starts at ~40% from left
+      const targetLeft = colEl.offsetLeft - scrollEl.clientWidth * 0.4
       scrollEl.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' })
-    }, 60)
+    }, 80)
     return () => clearTimeout(t)
   }, [selectedInd])
 
@@ -287,6 +297,7 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
 
         {/* ── Col 1: My Skills ── */}
         <div className="cpm-col">
+          <ColHeader step="1" label="Your Skills" />
           <div
             className={`cpm-node cpm-node-skills${skillsOpen ? ' cpm-selected' : ''}`}
             ref={skillsRef}
@@ -319,6 +330,7 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
 
         {/* ── Col 2: Career Pathways hub ── */}
         <div className="cpm-col">
+          <ColHeader step="2" label="AI Match" />
           <div className="cpm-node cpm-node-hub" ref={hubRef}>
             <div className="cpm-hub-pulse" />
             <div className="cpm-hub-pulse cpm-hub-pulse-2" />
@@ -329,6 +341,7 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
 
         {/* ── Col 3: Roles ── */}
         <div className="cpm-col cpm-col-roles">
+          <ColHeader step="3" label="Job Roles" />
           {ROLES.map(role => {
             const isSel  = selectedRole === role.id
             const isBlur = !!selectedRole && !isSel
@@ -358,6 +371,7 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
         {/* ── Col 4: Industries ── */}
         {selectedRoleData && (
           <div className="cpm-col cpm-col-enter cpm-col-child" ref={indColRef}>
+            <ColHeader step="4" label="Michigan Industries" />
             {selectedRoleData.industries.map(ind => {
               const isSel  = selectedInd === ind.id
               const isBlur = !!selectedInd && !isSel
@@ -387,6 +401,7 @@ export default function CareerPathwayMap({ color = '#1a6bff' }) {
         {/* ── Col 5: Required Skills ── */}
         {selectedIndData && (
           <div className="cpm-col cpm-col-enter cpm-col-child" ref={skillColRef}>
+            <ColHeader step="5" label="Skills to Learn" />
             {selectedIndData.skills.map(sk => {
               const isOpen = expandedSkill === sk.id
               return (
