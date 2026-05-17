@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import SkilldnaLogo from '../components/SkilldnaLogo'
 import ThemeToggle from '../components/ThemeToggle'
 import CareerPathwayMap from '../components/CareerPathwayMap'
-import ChatBar from '../components/ChatBar'
+import InsightFloater from '../components/InsightFloater'
 import { useTheme } from '../context/ThemeContext'
 import { payloadToTree } from '../api/transform'
 import { fetchPayload } from '../api/client'
@@ -22,7 +22,6 @@ export default function ResultsPage() {
 
   const [payload, setPayload] = useState(initialPayload)
   const [error,   setError]   = useState(null)
-  const [missedIdx, setMissedIdx] = useState(0)
 
   // Re-fetch payload if we have a session id but no payload (e.g. reload).
   useEffect(() => {
@@ -52,15 +51,10 @@ export default function ResultsPage() {
 
   const tree = useMemo(() => payloadToTree(payload || {}), [payload])
 
-  // Cycle through missed-opportunities (result-page channel) every 9 s so
-  // the band has visible motion without distracting from the map.
-  useEffect(() => {
-    if (!tree.missedResult || tree.missedResult.length === 0) return
-    const id = setInterval(() => {
-      setMissedIdx((i) => (i + 1) % tree.missedResult.length)
-    }, 9000)
-    return () => clearInterval(id)
-  }, [tree.missedResult])
+  const allInsights = useMemo(
+    () => [tree.signatureInsight, ...(tree.missedResult || [])].filter(Boolean),
+    [tree]
+  )
 
   return (
     <div className="results-root">
@@ -79,22 +73,6 @@ export default function ResultsPage() {
         <p className="results-subtitle">
           Start from your skills → select a role → explore Michigan industries → discover what to learn next.
         </p>
-
-        {/* Signature insight */}
-        {tree.signatureInsight && (
-          <p className="results-signature">{tree.signatureInsight}</p>
-        )}
-
-        {/* Rotating "you may have missed" band */}
-        {tree.missedResult && tree.missedResult.length > 0 && (
-          <div className="results-missed-band">
-            <span className="results-missed-tag">You may have missed</span>
-            <span key={missedIdx} className="results-missed-text">
-              {tree.missedResult[missedIdx]}
-            </span>
-          </div>
-        )}
-
         {error && <p className="results-error">{error}</p>}
       </div>
 
@@ -107,10 +85,8 @@ export default function ResultsPage() {
         />
       </div>
 
-      {/* Chat bar — 1/4 of remaining height */}
-      <div className="results-chat-section">
-        <ChatBar sessionId={sessionId} />
-      </div>
+      {/* Floating SKILL DNA INSIGHTS chat widget */}
+      <InsightFloater allInsights={allInsights} sessionId={sessionId} />
 
     </div>
   )

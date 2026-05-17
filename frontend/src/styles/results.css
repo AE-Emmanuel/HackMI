@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   transition: background 0.25s;
 }
 
@@ -50,25 +51,18 @@
 .results-heading {
   padding: 16px 32px 0;
   flex-shrink: 0;
+  animation: page-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── Map section (3/4 of remaining height) ── */
+/* ── Map section — fills all remaining height ── */
 .results-map-section {
-  flex: 3;
+  flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* ── Chat section (1/4 of remaining height) ── */
-.results-chat-section {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border);
-}
 
 .results-title {
   font-size: 1.5rem;

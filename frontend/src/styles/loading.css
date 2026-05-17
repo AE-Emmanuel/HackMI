@@ -18,12 +18,13 @@
   max-width: 720px;
   width: 100%;
   text-align: center;
+  animation: page-fade-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .loading-headline {
   font-size: 1.6rem;
   font-weight: 600;
-  color: var(--fg, #0f172a);
+  color: var(--text-primary);
   letter-spacing: 0.01em;
   margin-top: 8px;
 }
@@ -31,7 +32,7 @@
 .loading-rotating-line {
   min-height: 28px;
   font-size: 0.98rem;
-  color: var(--fg-soft, #64748b);
+  color: var(--text-secondary);
   background: rgba(26, 107, 255, 0.06);
   padding: 8px 18px;
   border-radius: 999px;
@@ -65,7 +66,7 @@
   justify-content: space-between;
   width: min(540px, 80%);
   font-size: 0.78rem;
-  color: var(--fg-soft, #64748b);
+  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
 .loading-elapsed {

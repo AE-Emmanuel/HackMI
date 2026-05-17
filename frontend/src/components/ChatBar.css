@@ -12,6 +12,7 @@
 
 /* ── Conversation history ── */
 .chatbar-history {
+  position: relative;
   width: 100%;
   max-width: 720px;
   max-height: 38vh;
@@ -19,13 +20,27 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 12px 0 4px;
+  padding: 40px 0 4px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
 .chatbar-history::-webkit-scrollbar { width: 4px; }
 .chatbar-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Fade older messages as they scroll up */
+.chatbar-history::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  display: block;
+  height: 36px;
+  margin-bottom: -36px;
+  flex-shrink: 0;
+  background: linear-gradient(to bottom, var(--bg-alt) 0%, transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+}
 
 .chat-msg {
   display: flex;
@@ -197,4 +212,69 @@
   color: var(--text-muted);
   text-align: center;
   transition: color 0.25s;
+}
+
+/* ── Markdown rendering ── */
+.chat-msg-markdown { width: 100%; }
+.chat-msg-markdown p { margin-bottom: 0.5em; }
+.chat-msg-markdown p:last-child { margin-bottom: 0; }
+.chat-msg-markdown ul,
+.chat-msg-markdown ol { margin: 0.4em 0 0.4em 1.2em; }
+.chat-msg-markdown li { margin-bottom: 0.25em; }
+.chat-msg-markdown strong { font-weight: 700; }
+.chat-msg-markdown code {
+  background: rgba(26, 107, 255, 0.08);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.chat-msg-markdown pre {
+  background: rgba(26, 107, 255, 0.06);
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+.chat-msg-markdown pre code { background: none; padding: 0; }
+.chat-msg-markdown h3,
+.chat-msg-markdown h4 {
+  font-size: 0.95em;
+  font-weight: 700;
+  margin: 0.5em 0 0.25em;
+  color: var(--text-primary);
+}
+
+/* ── Starter chips ── */
+.chatbar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 720px;
+  width: 100%;
+}
+
+.chatbar-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--blue-primary, #1a6bff);
+  background: rgba(26, 107, 255, 0.07);
+  border: 1px solid rgba(26, 107, 255, 0.22);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.chatbar-chip:hover {
+  background: rgba(26, 107, 255, 0.14);
+  border-color: rgba(26, 107, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.chatbar-chip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
 }
